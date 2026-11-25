@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Маршруты</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="stylesheet" href="styles.css?v=5">
+<script type="module" src="app.js?v=5"></script>
+</head>
+<body>
+<div id="map"></div>
+<div class="top" id="top"></div>
+<div class="empty" id="empty"><h3>Точек пока нет</h3><p class="muted">Добавьте точку кнопкой «+ Точка», импортируйте список или загрузите пример по Навоийской области.</p><button class="btn pri" id="e-demo">Загрузить пример</button></div>
+<div class="fab" id="fab"><button id="f-me">Я здесь</button><button class="main" id="f-add">+ Точка</button></div>
+<div class="banner" id="banner"><span>Нажмите на карту, чтобы поставить точку</span><button id="b-cancel">Отмена</button></div>
+
+<section class="panel" id="p-points">
+  <div class="card">
+    <input id="f-q" placeholder="Поиск: название, телефон, город">
+    <div class="g2" style="margin-top:8px">
+      <label>Область<select id="f-r"></select></label>
+      <label>Район / город<select id="f-d"></select></label>
+      <label>Статус<select id="f-s"><option value="todo">Не посещённые</option><option value="done">Посещённые</option><option value="all">Все</option></select></label>
+      <label>Радиус от меня, км<input id="f-km" type="number" min="1" max="1000" value="10"></label>
+      <label style="grid-column:1/-1">Сортировка<select id="f-sort"><option value="route">По очереди маршрута</option><option value="dist">Ближайшие ко мне</option><option value="name">По названию</option></select></label>
+    </div>
+    <label class="check" style="margin-top:10px"><input type="checkbox" id="f-near"> Только рядом со мной</label>
+  </div>
+  <div class="row" style="margin:0 0 6px"><span class="muted" id="f-count" style="align-self:center;margin-right:auto"></span><button class="btn sm" id="l-map">Показать на карте</button><button class="btn sm" id="l-imp">Импорт</button></div>
+  <div class="list" id="list"></div>
+</section>
+
+<section class="panel" id="p-route">
+  <div class="card">
+    <label>Старт — откуда выезжаете<input id="c-start" placeholder="пусто — от первой точки"></label>
+    <div class="row" style="margin-top:6px"><button class="btn sm" id="c-me">Моё местоположение</button><button class="btn sm" id="c-clr">Очистить</button></div>
+    <label style="margin-top:10px">Режим дня<select id="c-mode"><option value="base">Каждый день из старта и обратно</option><option value="stay">Ночёвка на месте (поездка по области)</option></select></label>
+    <div class="g2" style="margin-top:10px">
+      <label>Начало дня<input id="c-t0" type="time" value="09:00"></label>
+      <label>Часов в день<input id="c-hours" type="number" min="1" max="16"></label>
+      <label>Ширина дня, км<input id="c-width" type="number" min="1" max="300"></label>
+      <label>Минут на точке<input id="c-stop" type="number" min="0" max="240"></label>
+      <label>Макс. точек в день<input id="c-max" type="number" min="1" max="100" placeholder="без ограничения"></label>
+    </div>
+    <p class="muted" style="margin:8px 0 0">В один день попадают только самые близкие точки — не дальше «ширины дня» друг от друга.</p>
+    <label class="check" id="c-loop-row" style="margin-top:10px"><input type="checkbox" id="c-loop"> Вернуться на старт в конце поездки</label>
+  </div>
+  <button class="btn pri wide" id="r-build" data-main>Построить маршрут</button>
+  <p class="muted" id="r-note" style="margin:8px 2px 12px">Маршрут строится по точкам из текущего фильтра (вкладка «Точки»), посещённые пропускаются.</p>
+  <div id="days"></div>
+</section>
+
+<nav class="tabs">
+  <button data-tab="map" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>Карта</button>
+  <button data-tab="points"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Точки</button>
+  <button data-tab="route"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></svg>Маршрут</button>
+</nav>
+<div id="modal"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+</body>
+</html>
